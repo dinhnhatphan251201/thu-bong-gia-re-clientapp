@@ -1,5 +1,8 @@
 const api = "http://localhost:8083";
-let product;
+let productDetail;
+let quantity_inventory = 0;
+let quantity_cart = 0;
+let token = localStorage.getItem("token");
 
 $(document).ready(function () {
     let url = window.location.pathname;
@@ -12,6 +15,7 @@ $(document).ready(function () {
             console.log("Error: " + textStatus + " - " + errorThrown);
         },
         success: function (data) {
+            productDetail = data;
             let product = data;
             let productsHTML = "";
 
@@ -99,6 +103,7 @@ $(document).ready(function () {
             console.log("Error: " + textStatus + " - " + errorThrown);
         },
         success: function (data) {
+            quantity_inventory = data.quantity;
             let product_Inventory = data;
             $("#quantity_Inventory").append(`${product_Inventory.quantity}`);
             quantity = product_Inventory;
@@ -185,14 +190,37 @@ $(document).ready(function () {
         },
         type: "GET",
     });
+
+    $.ajax({
+        url: `${api}/carts/${token}`,
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("Error: " + textStatus + " - " + errorThrown);
+        },
+        success: function (data) {
+            let cart = data;
+
+            quantity_cart = cart.cartDetails.filter(
+                (cartDetail) => cartDetail.product === productDetail.id
+            )[0].quantity;
+            console.log(quantity_cart);
+        },
+        type: "GET",
+    });
 });
 
 function increaseCount(a, b) {
     let input = b.previousElementSibling;
     let value = parseInt(input.value, 10);
     value = isNaN(value) ? 0 : value;
-    console.log(product);
-    value++;
+    // console.log(productDetail);
+    console.log(quantity_inventory);
+
+    if (value + quantity_cart < quantity_inventory) {
+        value++;
+    } else {
+        alert("Số lượng cần mua vượt quá mức trong kho");
+    }
+
     input.value = value;
 }
 function decreaseCount(a, b) {

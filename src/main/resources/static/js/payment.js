@@ -62,7 +62,7 @@ $(document).ready(function () {
             });
 
             let subTotal = 0;
-            let shippingCost = 35000;
+            let shippingCost = 20000;
 
             cart.cartDetails.map((cartDetail) => {
                 subTotal += cartDetail.totalLine;
@@ -136,7 +136,7 @@ $(document).ready(function () {
             success: function (result) {
                 console.log(result);
 
-                let shippingCost = 35000;
+                let shippingCost = 20000;
                 let shippingNote = form.elements["shippingNote"].value;
                 let shippingAddress = form.elements["shippingAddress"].value;
                 let promotionCode = $("#promotionCode").val();
@@ -181,7 +181,34 @@ $(document).ready(function () {
                         );
                     },
                     success: function (result) {
-                        window.location.href = "http://localhost:8080/products";
+                        $.ajax({
+                            url: `${api}/carts/detail/${token}`,
+                            type: "DELETE",
+                            async: true,
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader(
+                                    "Access-Control-Allow-Origin",
+                                    "*"
+                                );
+                                xhr.setRequestHeader(
+                                    "Accept",
+                                    "application/json"
+                                );
+                                xhr.setRequestHeader(
+                                    "Content-Type",
+                                    "application/json"
+                                );
+                            },
+                            success: function (result) {
+                                window.location.href =
+                                    "http://localhost:8080/products";
+                            },
+                            error: function (textStatus, errorThrown) {
+                                console.log(
+                                    "Error: " + textStatus + errorThrown
+                                );
+                            },
+                        });
                     },
                     error: function (textStatus, errorThrown) {
                         console.log("Error: " + textStatus + errorThrown);

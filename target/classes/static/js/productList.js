@@ -110,13 +110,25 @@ $(document).ready(function () {
                 products.map((product) => {
                     let productsHTML = `
                             <div class="col l-2-4 m-4 c-6">
-                                <a href="/products/${product.id}" class="home-product-item">
+                                <a href="/products/${
+                                    product.id
+                                }" class="home-product-item">
                                     <div class="home-product-item__img"
-                                        style="background-image: url(${product.image})">
+                                        style="background-image: url(${
+                                            product.image
+                                        })">
                                     </div>
-                                    <h4 class="home-product-item__name">${product.name}</h4>
+                                    <h4 class="home-product-item__name">${
+                                        product.name
+                                    }</h4>
                                     <div class="home-product-item__price">
-                                        <span class="home-product-item__price-current">${product.cost}</span>
+                                        <span class="home-product-item__price-current">${product.cost.toLocaleString(
+                                            "it-IT",
+                                            {
+                                                style: "currency",
+                                                currency: "VND",
+                                            }
+                                        )}</span>
                                     </div>
                                     <div class="home-product-item__action">
                                         <span class="home-product-item__like home-product-item__like--liked">
@@ -133,7 +145,9 @@ $(document).ready(function () {
                                         <span class="home-product-item__sold">88 Đã bán</span>
                                     </div>
                                     <div class="home-product-item__origin">
-                                        <span class="home-product-item__brand">${product.category}</span>
+                                        <span class="home-product-item__brand">${
+                                            product.category
+                                        }</span>
                                         <span class="home-product-item__origin-name"></span>
                                     </div>
                                     <div class="home-product-item__favourite">
@@ -171,13 +185,25 @@ $(document).ready(function () {
                 products.map((product) => {
                     let productsHTML = `
                             <div class="col l-2-4 m-4 c-6">
-                                <a href="/products/${product.id}" class="home-product-item">
+                                <a href="/products/${
+                                    product.id
+                                }" class="home-product-item">
                                     <div class="home-product-item__img"
-                                        style="background-image: url(${product.image})">
+                                        style="background-image: url(${
+                                            product.image
+                                        })">
                                     </div>
-                                    <h4 class="home-product-item__name">${product.name}</h4>
+                                    <h4 class="home-product-item__name">${
+                                        product.name
+                                    }</h4>
                                     <div class="home-product-item__price">
-                                        <span class="home-product-item__price-current">${product.cost}</span>
+                                        <span class="home-product-item__price-current">${product.cost.toLocaleString(
+                                            "it-IT",
+                                            {
+                                                style: "currency",
+                                                currency: "VND",
+                                            }
+                                        )}</span>
                                     </div>
                                     <div class="home-product-item__action">
                                         <span class="home-product-item__like home-product-item__like--liked">
@@ -194,7 +220,9 @@ $(document).ready(function () {
                                         <span class="home-product-item__sold">88 Đã bán</span>
                                     </div>
                                     <div class="home-product-item__origin">
-                                        <span class="home-product-item__brand">${product.category}</span>
+                                        <span class="home-product-item__brand">${
+                                            product.category
+                                        }</span>
                                         <span class="home-product-item__origin-name"></span>
                                     </div>
                                     <div class="home-product-item__favourite">
@@ -234,13 +262,25 @@ $(document).ready(function () {
                 products.map((product) => {
                     let productsHTML = `
                             <div class="col l-2-4 m-4 c-6">
-                                <a href="/products/${product.id}" class="home-product-item">
+                                <a href="/products/${
+                                    product.id
+                                }" class="home-product-item">
                                     <div class="home-product-item__img"
-                                        style="background-image: url(${product.image})">
+                                        style="background-image: url(${
+                                            product.image
+                                        })">
                                     </div>
-                                    <h4 class="home-product-item__name">${product.name}</h4>
+                                    <h4 class="home-product-item__name">${
+                                        product.name
+                                    }</h4>
                                     <div class="home-product-item__price">
-                                        <span class="home-product-item__price-current">${product.cost}</span>
+                                        <span class="home-product-item__price-current">${product.cost.toLocaleString(
+                                            "it-IT",
+                                            {
+                                                style: "currency",
+                                                currency: "VND",
+                                            }
+                                        )}</span>
                                     </div>
                                     <div class="home-product-item__action">
                                         <span class="home-product-item__like home-product-item__like--liked">
@@ -257,7 +297,9 @@ $(document).ready(function () {
                                         <span class="home-product-item__sold">88 Đã bán</span>
                                     </div>
                                     <div class="home-product-item__origin">
-                                        <span class="home-product-item__brand">${product.category}</span>
+                                        <span class="home-product-item__brand">${
+                                            product.category
+                                        }</span>
                                         <span class="home-product-item__origin-name"></span>
                                     </div>
                                     <div class="home-product-item__favourite">

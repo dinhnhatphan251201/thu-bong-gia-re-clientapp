@@ -2,7 +2,7 @@ const api = "http://localhost:8083";
 
 $(document).ready(function () {
     $.ajax({
-        url: "http://localhost:8083/products",
+        url: `${api}/products`,
         error: function (jqXHR, textStatus, errorThrown) {
             console.log("Error: " + textStatus + " - " + errorThrown);
         },
@@ -10,39 +10,52 @@ $(document).ready(function () {
             let products = data;
 
             products.map((product) => {
-                let productsHTML = `
-                    <tr>
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            <div class="text-sm leading-5 text-gray-900">${product.id}</div>
-                        </td>
+                $.ajax({
+                    url: `${api}/productInventory/${product.id}`,
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(
+                            "Error: " + textStatus + " - " + errorThrown
+                        );
+                    },
+                    success: function (data) {
+                        let productInventory = data;
 
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            <div class="text-sm leading-5 text-gray-900">${product.name}</div>
-                        </td>
+                        let productsHTML = `
+                            <tr>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900">${product.id}</div>
+                                </td>
 
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            <div class="text-sm leading-5 text-gray-900">${product.cost}</div>
-                        </td>
-                        
-                        <td
-                            class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
-                            <div class="text-sm leading-5 text-gray-900">${product.category}</div>
-                        </td>
-                        
-                        <td
-                            class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
-                            <div class="text-sm leading-5 text-gray-900">quantity</div>
-                        </td>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900">${product.name}</div>
+                                </td>
 
-                        <td
-                            class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
-                            <a class="text-indigo-600 hover:text-indigo-900" onClick='openModelUpdate(${product.id})'>Edit</a>
-                        </td>
-                        
-                    </tr>
-                `;
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900">${product.cost}</div>
+                                </td>
+                                
+                                <td
+                                    class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                    <div class="text-sm leading-5 text-gray-900">${product.category}</div>
+                                </td>
+                                
+                                <td
+                                    class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                    <div class="text-sm leading-5 text-gray-900">${productInventory.quantity}</div>
+                                </td>
 
-                $("#product-list-table").append(productsHTML);
+                                <td
+                                    class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
+                                    <a class="text-indigo-600 hover:text-indigo-900" onClick='openModelUpdate(${product.id})'>Edit</a>
+                                </td>
+                                
+                            </tr>
+                        `;
+
+                        $("#product-list-table").append(productsHTML);
+                    },
+                    type: "GET",
+                });
             });
         },
         type: "GET",
