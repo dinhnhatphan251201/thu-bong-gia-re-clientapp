@@ -357,7 +357,8 @@
 }
 
 .auth-form__container {
-    padding: 0 32px;
+    padding: 50px;
+    
 }
 
 .auth-form__header {
@@ -700,6 +701,7 @@
     color: var(--white-color);
     font-size: 2.4rem;
     margin-top: 6px;
+    width: 30px;
 }
 
 .header__cart-list--no-cart-mess {

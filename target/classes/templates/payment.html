@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,14 +10,49 @@
     <link rel="stylesheet" href="/css/grid.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="./assets/font/fontawesome-free-5.15.3-web/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="/js/productList.js"></script>
-    <script src="/js/auth.js"></script>
-    <title>Shop</title>
+    <script src="/js/payment.js"></script>
+    <title>Document</title>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                clifford: '#da373d',
+              }
+            }
+          }
+        }
+      </script>
+      <style type="text/tailwindcss">
+        @layer utilities {
+          .content-auto {
+            content-visibility: auto;
+          }
+        }
+      </style>
+    <!-- <script type="text/javascript">
+        function increaseCount(a, b) {
+          var input = b.previousElementSibling;
+          var value = parseInt(input.value, 10); 
+          value = isNaN(value)? 0 : value;
+          value ++;
+          input.value = value;
+        }
+        function decreaseCount(a, b) {
+          var input = b.nextElementSibling;
+          var value = parseInt(input.value, 10); 
+          if (value > 1) {
+            value = isNaN(value)? 0 : value;
+            value --;
+            input.value = value;
+          }
+        }
+      </script> -->
 </head>
-
 <body>
     <div class="app">
         <header class="header">
@@ -56,7 +90,6 @@
                     <a href="/cart">
                         <div class="header__cart">
                             <div class="header__cart-wrap">
-                                <!-- <i class="header__cart-icon fas fa-shopping-cart"></i> -->
                                 <svg class="header__cart-icon fas fa-shopping-cart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M96 0C107.5 0 117.4 8.19 119.6 19.51L121.1 32H541.8C562.1 32 578.3 52.25 572.6 72.66L518.6 264.7C514.7 278.5 502.1 288 487.8 288H170.7L179.9 336H488C501.3 336 512 346.7 512 360C512 373.3 501.3 384 488 384H159.1C148.5 384 138.6 375.8 136.4 364.5L76.14 48H24C10.75 48 0 37.25 0 24C0 10.75 10.75 0 24 0H96zM128 464C128 437.5 149.5 416 176 416C202.5 416 224 437.5 224 464C224 490.5 202.5 512 176 512C149.5 512 128 490.5 128 464zM512 464C512 490.5 490.5 512 464 512C437.5 512 416 490.5 416 464C416 437.5 437.5 416 464 416C490.5 416 512 437.5 512 464z"/></svg>
                                 <span class="header__cart-notice" id="quantity-cart-icon"></span>
                             </div>
@@ -65,94 +98,83 @@
                 </div>
             </div>
         </header>
-
-        <div class="app__container">
-            <div class="grid wide">
-                <div class="row sm-gutter app__content">
-                    <div class="col l-2 m-0 c-0">
-                        <nav class="category">
-                            <h3 class="category__heading">
-                                Danh mục
-                            </h3>
-
-                            <ul class="category-list">
-                                <li class="category-item category-item--active">
-                                    <a href="" class="category-item__link">Trang điểm mặt</a>
-                                </li>
-                                <li class="category-item">
-                                    <a href="" class="category-item__link">Trang điểm môi</a>
-                                </li>
-                                <li class="category-item">
-                                    <a href="" class="category-item__link">Trang điểm mắt</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                    <div class="col l-10 m-12 c-12">
-                        <div class="home-filter hide-on-mobile-tablet">
-                            <span class="home-filter__label">Sắp xếp theo</span>
-                            <button class="home-filter__btn btn">Phổ biến</button>
-                            <button class="home-filter__btn btn btn-primary">Mới nhất</button>
-                            <button class="home-filter__btn btn">Bán chạy</button>
-
-                            <div class="select-input">
-                                <span class="select-input__label" id="select-input__label">Giá</span>
-                                <i class="select-input__icon fas fa-angle-down"></i>
-                                <ul class="select-input__list">
-                                    <li class="select-input__item" id="sort-product-ASC">
-                                        <a class="select-input__link" >Giá: Thấp đến cao</a>
-                                    </li>
-                                    <li class="select-input__item" id="sort-product-DESC">
-                                        <a class="select-input__link">Giá: Cao đến thấp</a>
-                                    </li>
+        <div>
+            <div class="py-2 px-[10px] md:px-[75px] bg-gray-200">
+                <div class='min-h-[75vh] bg-white flex-row md:flex'>
+                    <div class='w-full md:w-[50%] p-[10px]'>
+                        <div class="block p-6 rounded-lg shadow-lg bg-white min-h-[75vh] min-h-[80vh]">
+                            <div class="border-b-4">
+                                <h3 class="font-medium border-b-2 text-2xl">Sản phẩm đã được chọn</h3>
+                                <ul class="mx-4 my-4 h-[45vh] overflow-y-auto" id="cart-payment">
+                                    <!-- <li class="flex justify-between mb-4 p-2 border-b-2" >
+                                        <div class="flex">
+                                            <div class="w-[20%] mr-3">
+                                                <img class="w-full h-full object-cover" src="https://cf.shopee.vn/file/e1a71259128c705d7fd73d450082cedc" />
+                                            </div>
+                                            <div class="w-[70%]">
+                                                <h3 class="text-2xl cartdetail__item h-[65px] font-medium">
+                                                    Máy đo đường huyết FACARE - Máy đo tiểu đường tặng kèm 10 que thử và 10 kim chích
+                                                </h3>
+                                                <span class="text-xl">Phân loại: M</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="text-2xl">90.000VND X 3</span>
+                                            <div class="flex flex-row-reverse">
+                                                <div class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 cursor-pointer text-xl mt-3">
+                                                    Xóa
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li> -->
                                 </ul>
                             </div>
-
-                    
-                        </div>
-
-                        <div class="home-product">
-                            <div class="row sm-gutter" id="product-list">
-                                <!-- product-item -->
-                                <!-- <div class="col l-2-4 m-4 c-6">
-                                    <a href="./productDetail.html" class="home-product-item">
-                                        <div class="home-product-item__img"
-                                            style="background-image: url(https://cf.shopee.vn/file/e1a71259128c705d7fd73d450082cedc)">
-                                        </div>
-                                        <h4 class="home-product-item__name">Máy đo đường huyết FACARE - Máy đo tiểu
-                                            đường tặng kèm 10 que thử và 10 kim chích</h4>
-                                        <div class="home-product-item__price">
-                                            <span class="home-product-item__price-current">1.335.000đ</span>
-                                        </div>
-                                        <div class="home-product-item__action">
-                                            <span class="home-product-item__like home-product-item__like--liked">
-                                                <i class="home-product-item__like-icon-empty far fa-heart"></i>
-                                                <i class="home-product-item__like-icon-fill fas fa-heart"></i>
-                                            </span>
-                                            <div class="home-product-item__rating">
-                                                <i class="home-product-item__star--gold fas fa-star"></i>
-                                                <i class="home-product-item__star--gold fas fa-star"></i>
-                                                <i class="home-product-item__star--gold fas fa-star"></i>
-                                                <i class="home-product-item__star--gold fas fa-star"></i>
-                                                <i class=" fas fa-star"></i>
-                                            </div>
-                                            <span class="home-product-item__sold">88 Đã bán</span>
-                                        </div>
-                                        <div class="home-product-item__origin">
-                                            <span class="home-product-item__brand">Category</span>
-                                            <span class="home-product-item__origin-name"></span>
-                                        </div>
-                                        <div class="home-product-item__favourite">
-                                            <i class="fas fa-check"></i>
-                                            <span>Yêu thích</span>
-                                        </div>
-                                    </a>
-                                </div> -->
-
+                            <div>
+                                <div class='flex justify-between mb-2 items-center'>
+                                    <span class="text-xl">Mã giảm giá</span>
+                                    <input id="promotionCode" type="text" class="w-[450px] text-xl" placeholder="Nhập mã giảm giá">
+                                </div>
+                                <div class='flex justify-between mb-2'>
+                                    <span class="text-xl">Tạm tính </span>
+                                    <span class="text-xl" id="sub-total"></span>
+                                </div>
+                                <div class='flex justify-between border-b-2 mb-3'>
+                                    <span class="text-xl">Phí vận chuyển </span>
+                                    <span class="text-xl" id="shipping-cost"></span>
+                                </div>
+                                <div class='flex justify-between'>
+                                    <span class='font-bold text-2xl'>Tổng tiền thanh toán</span>
+                                    <span class='font-bold text-2xl' id="total"></span>
+                                </div>
                             </div>
                         </div>
-
-                        
+                    </div>
+                    <div class='w-full md:w-[50%] p-[10px]'>
+                        <div class="block p-6 rounded-lg shadow-lg bg-white min-h-[80vh]">
+                            <h3 class="mb-5 text-2xl font-bold">Thông Tin Khách Hàng</h3>
+                            <form id="form-order">
+                                <div class="form-group mb-6">
+                                    <input name="name" type="text" class="form-control block w-full px-3 py-3 font-normal text-gray-700 text-2xl bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Họ và tên">
+                                    <div class="grid grid-cols-2 gap-4 mt-[18px]">
+                                        <div class="form-group mb-6">
+                                            <input name="email" type="text" class="form-control block w-full px-3 py-3 text-2xl font-normal text-gray-700bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Email">
+                                        </div>
+                                        <div class="form-group mb-6">
+                                            <input name="phoneNumber" type="text" class="form-control block w-full px-3 py-3 text-2xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Phone">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-6">
+                                        <input name="shippingAddress" type="text" class="form-control block w-full px-3 py-3 text-2xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Địa chỉ">
+                                    </div>
+                                    <div class="form-group mb-6">
+                                        <input name="shippingNote" type="text" class="form-control block w-full px-3 py-3 text-2xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" placeholder="Ghi chú">
+                                    </div>
+                                </div>
+                                <button type="submit" class=" w-full px-6 py-2.5 bg-blue-600 text-white font-medium text-2xl leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out" >
+                                    Xác Nhận Đặt Hàng
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -166,101 +188,5 @@
             </div>
         </footer>
     </div>
-
-    <!-- modal layout -->
-    <!-- <div class="modal">
-            <div class="modal__overlay">
-
-            </div>
-            <div class="modal__body">
-                register form
-                <div class="auth-form">
-                    <div class="auth-form__container">
-                        <div class="auth-form__header">
-                            <h3 class="auth-form__heading">Đăng Ký</h3>
-                            <span class="auth-form__switch-btn">Đăng Nhập</span>
-    
-                            </div>
-                            <div class="auth-form__form">
-                                <div class="auth-form__group">
-                                    <input type="text" class="auth-form__input" placeholder="Email của bạn">
-                                </div>
-                                <div class="auth-form__group">
-                                    <input type="password" class="auth-form__input" placeholder="Mật khẩu của bạn">
-                                </div>
-                                <div class="auth-form__group">
-                                    <input type="password" class="auth-form__input" placeholder="Nhập lại mật khẩu">
-                                </div>
-                            </div>
-                            <div class="auth-form__aside">
-                                <p class="auth-form__policy-text">
-                                    Bằng việc đăng ký, bạn đồng ý với chúng tôi về
-                                    <a href="" class="auth-form__text-link">Điều khoản dịch vụ</a> & 
-                                    <a href="" class="auth-form__text-link">Chính sách bảo mật</a>
-                                </p>
-                            </div>
-    
-                            <div class="auth-form__controls">
-                                <button class="btn auth-form__controls-back btn--normal">TRỞ LẠI</button>
-                                <button class="btn btn-primary">ĐĂNG KÝ</button>
-                            </div>
-                    </div>
-
-                    <div class="auth-form__socials">
-                        <a href="" class="auth-form__socials-icon--facebook btn btn--size-s btn--with-icon">
-                            <i class="auth-form__socials-icon fab fa-facebook-square"></i>
-                            <span class="auth-form__socials-title">Kết nối với facebook</span>
-                        </a>
-                        <a href="" class="auth-form__socials-icon--google btn btn--size-s btn--with-icon">
-                            <i class="auth-form__socials-icon fab fa-google"></i>
-                            <span class="auth-form__socials-title">Kết nối với google</span>
-                        </a>
-                    </div>
-                </div>
-
-                login form
-                <div class="auth-form">
-                    <div class="auth-form__container">
-                        <div class="auth-form__header">
-                            <h3 class="auth-form__heading">Đăng Nhập</h3>
-                            <span class="auth-form__switch-btn">Đăng Ký</span>
-    
-                            </div>
-                            <div class="auth-form__form">
-                                <div class="auth-form__group">
-                                    <input type="text" class="auth-form__input" placeholder="Email của bạn">
-                                </div>
-                                <div class="auth-form__group">
-                                    <input type="password" class="auth-form__input" placeholder="Mật khẩu của bạn">
-                                </div>
-                            </div>
-                            <div class="auth-form__aside">
-                                <div class="auth-form__help">
-                                    <a href="" class="auth-form__help-link auth-form__help-forgot">Quên mật khẩu?</a>
-                                    <span class="auth-form__help-separate"></span>
-                                    <a href="" class="auth-form__help-link">Cần trợ giúp?</a>
-                                </div>
-                            </div>
-    
-                            <div class="auth-form__controls">
-                                <button class="btn auth-form__controls-back btn--normal">TRỞ LẠI</button>
-                                <button class="btn btn-primary">ĐĂNG NHẬP</button>
-                            </div>
-                    </div>
-
-                    <div class="auth-form__socials">
-                        <a href="" class="auth-form__socials-icon--facebook btn btn--size-s btn--with-icon">
-                            <i class="auth-form__socials-icon fab fa-facebook-square"></i>
-                            <span class="auth-form__socials-title">Kết nối với facebook</span>
-                        </a>
-                        <a href="" class="auth-form__socials-icon--google btn btn--size-s btn--with-icon">
-                            <i class="auth-form__socials-icon fab fa-google"></i>
-                            <span class="auth-form__socials-title">Kết nối với google</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div> -->
 </body>
-
 </html>

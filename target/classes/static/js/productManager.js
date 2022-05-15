@@ -1,3 +1,5 @@
+const api = "http://localhost:8083";
+
 $(document).ready(function () {
     $.ajax({
         url: "http://localhost:8083/products",
@@ -6,12 +8,9 @@ $(document).ready(function () {
         },
         success: function (data) {
             let products = data;
-            let productsHTML = "";
 
             products.map((product) => {
-                productsHTML =
-                    productsHTML +
-                    `
+                let productsHTML = `
                     <tr>
                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                             <div class="text-sm leading-5 text-gray-900">${product.id}</div>
@@ -37,38 +36,31 @@ $(document).ready(function () {
 
                         <td
                             class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
-                            <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                            <a class="text-indigo-600 hover:text-indigo-900" onClick='openModelUpdate(${product.id})'>Edit</a>
                         </td>
                         
                     </tr>
                 `;
-            });
 
-            document.getElementById("product-list-table").innerHTML =
-                productsHTML;
+                $("#product-list-table").append(productsHTML);
+            });
         },
         type: "GET",
     });
 
-    let modal = document.getElementById("myModal");
+    let modalAdd = $("#myModalAdd");
 
-    let btn = document.getElementById("myBtn");
+    let btnAdd = $("#myBtnAdd");
 
-    let span = document.getElementsByClassName("close")[0];
+    let spanCloseAdd = $("#closeModelAdd");
 
-    btn.onclick = function () {
-        modal.style.display = "block";
-    };
+    btnAdd.click(function () {
+        modalAdd.css("display", "block");
+    });
 
-    span.onclick = function () {
-        modal.style.display = "none";
-    };
-
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    };
+    spanCloseAdd.click(function () {
+        modalAdd.hide();
+    });
 
     let form = document.getElementById("form-add-product");
     form.addEventListener("submit", (event) => {
@@ -90,14 +82,13 @@ $(document).ready(function () {
             brand,
             category,
             material,
+            weight,
             height,
             width,
             image,
             cost,
             description,
         };
-
-        console.log(newProduct);
 
         event.preventDefault();
 
@@ -119,5 +110,128 @@ $(document).ready(function () {
             },
         });
     });
+
+    let formUpdate = document.getElementById("form-update-product");
+    formUpdate.addEventListener("submit", (event) => {
+        let id = formUpdate.elements["id"].value;
+        let name = formUpdate.elements["name"].value;
+        let origin = formUpdate.elements["origin"].value;
+        let brand = formUpdate.elements["brand"].value;
+        let category = formUpdate.elements["category"].value;
+        let material = formUpdate.elements["material"].value;
+        let weight = parseFloat(formUpdate.elements["weight"].value);
+        let height = parseFloat(formUpdate.elements["height"].value);
+        let width = parseFloat(formUpdate.elements["width"].value);
+        let image = formUpdate.elements["image"].value;
+        let cost = parseFloat(formUpdate.elements["cost"].value);
+        let description = formUpdate.elements["description"].value;
+
+        let quantity = parseInt(formUpdate.elements["quantity"].value);
+
+        let newProduct = {
+            id,
+            name,
+            origin,
+            brand,
+            category,
+            material,
+            weight,
+            height,
+            width,
+            image,
+            cost,
+            description,
+        };
+
+        event.preventDefault();
+
+        $.ajax({
+            url: "http://localhost:8083/products",
+            type: "PUT",
+            data: JSON.stringify(newProduct),
+            async: true,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+                xhr.setRequestHeader("Accept", "application/json");
+                xhr.setRequestHeader("Content-Type", "application/json");
+            },
+            success: function (result) {
+                window.location.href = "http://localhost:8080/productManager";
+            },
+            error: function (textStatus, errorThrown) {
+                console.log("Error: " + textStatus + errorThrown);
+            },
+        });
+
+        $.ajax({
+            url: `${api}/productInventory`,
+            type: "PUT",
+            data: JSON.stringify({
+                id: newProduct.id,
+                quantity: quantity,
+            }),
+            async: true,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+                xhr.setRequestHeader("Accept", "application/json");
+                xhr.setRequestHeader("Content-Type", "application/json");
+            },
+            success: function (result) {
+                window.location.href = "http://localhost:8080/productManager";
+            },
+            error: function (textStatus, errorThrown) {
+                console.log("Error: " + textStatus + errorThrown);
+            },
+        });
+    });
 });
 
+function openModelUpdate(id) {
+    let modalUpdate = $("#myModalUpdate");
+    modalUpdate.css("display", "block");
+    console.log("btn update click:" + id);
+
+    let spanCloseUpdate = $("#closeModelUpdate");
+
+    spanCloseUpdate.click(function () {
+        modalUpdate.hide();
+    });
+
+    $.ajax({
+        url: `${api}/products/${id}`,
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("Error: " + textStatus + " - " + errorThrown);
+        },
+        success: function (data) {
+            let product = data;
+            let formUpdate = document.getElementById("form-update-product");
+            formUpdate.elements["id"].value = product.id;
+            formUpdate.elements["name"].value = product.name;
+            formUpdate.elements["origin"].value = product.origin;
+            formUpdate.elements["brand"].value = product.brand;
+            formUpdate.elements["category"].value = product.category;
+            formUpdate.elements["material"].value = product.material;
+            formUpdate.elements["weight"].value = product.weight;
+            formUpdate.elements["height"].value = product.height;
+            formUpdate.elements["width"].value = product.width;
+            formUpdate.elements["image"].value = product.image;
+            formUpdate.elements["cost"].value = product.cost;
+            formUpdate.elements["description"].value = product.description;
+        },
+        type: "GET",
+    });
+
+    $.ajax({
+        url: `${api}/productInventory/${id}`,
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("Error: " + textStatus + " - " + errorThrown);
+        },
+        success: function (data) {
+            let product_Inventory = data;
+            let formUpdate = document.getElementById("form-update-product");
+            formUpdate.elements["quantityInventory"].value =
+                product_Inventory.quantity;
+        },
+        type: "GET",
+    });
+}

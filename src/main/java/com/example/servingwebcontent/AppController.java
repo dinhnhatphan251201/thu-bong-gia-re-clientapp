@@ -1,5 +1,7 @@
 package com.example.servingwebcontent;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AppController {
 	
 	@GetMapping("/products")
-	public String listProducts() {
+	public String listProducts(@PathVariable(name = "name", required = false) Optional<String> name) {
+		
 		return "productList";
 	}
 
@@ -24,6 +27,26 @@ public class AppController {
 	@GetMapping("/dashboard")
 	public String showDashboard() {
 		return "dashboard";
+	}
+	
+	@GetMapping("/orderManager")
+	public String showOrderManager() {
+		return "orderManager";
+	}
+	
+	@GetMapping("/promotionManager")
+	public String showPromotionManager() {
+		return "promotionManager";
+	}
+	
+	@GetMapping("/cart")
+	public String showCart() {
+		return "cart";
+	}
+	
+	@GetMapping("/payment")
+	public String showPayment() {
+		return "payment";
 	}
 	
 	@GetMapping("/productManager")
