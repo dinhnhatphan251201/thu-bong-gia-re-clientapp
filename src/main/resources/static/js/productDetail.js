@@ -37,6 +37,63 @@ $(document).ready(function () {
                                     ${product.description}
                                 </p>
                                 <span class="text-3xl block mt-[10px]" id="quantity_Inventory">sản phẩm còn trong kho: </span>
+                                <div class="grid grid-cols-6 wide pt-4 pb-4">
+                                <div class="col-span-2 grid grid-cols-5 mt-3">
+                                    <div class="col-span-3 text-2xl text-[#999999]">
+                                        Loại sản phẩm
+                                    </div>
+                                    <div class="col-span-2 text-2xl">
+                                        ${product.category}
+                                    </div>
+                                </div>
+                                <div class="col-span-3"></div>
+                                <div class="col-span-2 grid grid-cols-5 mt-3">
+                                    <div class="col-span-3 text-2xl text-[#999999]">
+                                        Chất liệu
+                                    </div>
+                                    <div class="col-span-2 text-2xl">
+                                        ${product.material}
+                                    </div>
+                                </div>
+                                <div class="col-span-3"></div>
+                                <div class="col-span-2 grid grid-cols-5 mt-3">
+                                    <div class="col-span-3 text-2xl text-[#999999]">
+                                        Chiều dài
+                                    </div>
+                                    <div class="col-span-2 text-2xl">
+                                        ${product.width} cm
+                                    </div>
+                                </div>
+                                <div class="col-span-3"></div>
+                                <div class="col-span-2 grid grid-cols-5 mt-3">
+                                    <div class="col-span-3 text-2xl text-[#999999]">
+                                        Chiều cao
+                                    </div>
+                                    <div class="col-span-2 text-2xl">
+                                        ${product.height} cm
+                                    </div>
+                                </div>
+                                <div class="col-span-3"></div>
+                                <div class="col-span-2 grid grid-cols-5 mt-3">
+                                    <div class="col-span-3 text-2xl text-[#999999]">
+                                        Trọng lượng
+                                    </div>
+                                    <div class="col-span-2 text-2xl">
+                                        ${product.weight} g
+                                    </div>
+                                </div>
+                                <div class="col-span-3"></div>
+                                <div class="col-span-2 grid grid-cols-5 mt-3">
+                                    <div class="col-span-3 text-2xl text-[#999999]">
+                                        Xuất xứ
+                                    </div>
+                                    <div class="col-span-2 text-2xl">
+                                        ${product.origin}
+                                    </div>
+                                </div>
+                                <div class="col-span-3"></div>
+                                
+                            </div>
                                 <div class="counter mt-[10px]">
                                     <span class="down" onClick='decreaseCount(event, this)'>-</span>
                                     <input type="text" class="text-ml" id="product-quantity" value="1">

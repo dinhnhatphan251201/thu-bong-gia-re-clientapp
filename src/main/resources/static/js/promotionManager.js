@@ -1,6 +1,14 @@
 const api = "http://localhost:8083";
+if (!localStorage.getItem("userId")) {
+    window.location.href = "http://localhost:8080/login";
+}
 
 $(document).ready(function () {
+    $("#btnLoguot").click(() => {
+        localStorage.removeItem("userId");
+        window.location.href = "http://localhost:8080/login";
+    });
+
     let modalAdd = $("#myModalAdd");
 
     let btnAdd = $("#myBtnAdd");
@@ -15,41 +23,71 @@ $(document).ready(function () {
         modalAdd.hide();
     });
 
-    let form = document.getElementById("form-add-promotion");
-    form.addEventListener("submit", (event) => {
-        let promotionCode = form.elements["promotionCode"].value;
-        let limit = form.elements["limit"].value;
-        let deducted = form.elements["deducted"].value;
-        let createdBy = 2;
-        let expiredDate = form.elements["expiredDate"].value;
-
-        let newPromotion = {
-            promotionCode: promotionCode,
-            limit: limit,
-            deducted: deducted,
-            createdBy: createdBy,
-            expiredDate: expiredDate,
-        };
-
-        event.preventDefault();
+    let checkPromotionCode = false;
+    $("#txtPromotionCode").blur(() => {
+        let promotionCode = $("#txtPromotionCode").val();
 
         $.ajax({
-            url: `${api}/promotions`,
-            type: "POST",
-            data: JSON.stringify(newPromotion),
-            async: true,
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-                xhr.setRequestHeader("Accept", "application/json");
-                xhr.setRequestHeader("Content-Type", "application/json");
+            url: `${api}/promotions/promotionCode?promotionCode=${promotionCode}`,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error: " + textStatus + " - " + errorThrown);
             },
-            success: function (result) {
-                window.location.href = "http://localhost:8080/promotionManager";
+            success: function (data) {
+                if (data.promotionCode) {
+                    $("#notifycationPromotionCode").html(() => {
+                        return "Mã khuyến mãi đã tồn tại";
+                    });
+                    checkPromotionCode = false;
+                } else {
+                    $("#notifycationPromotionCode").html(() => {
+                        return "";
+                    });
+                    checkPromotionCode = true;
+                }
             },
-            error: function (textStatus, errorThrown) {
-                console.log("Error: " + textStatus + errorThrown);
-            },
+            type: "GET",
         });
+    });
+
+    let form = document.getElementById("form-add-promotion");
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!checkPromotionCode) {
+            alert("Mã giảm giá đã tồn tại, vuo lòng kiểm tra lại");
+        } else {
+            let promotionCode = form.elements["promotionCode"].value;
+            let limit = form.elements["limit"].value;
+            let deducted = form.elements["deducted"].value;
+            let createdBy = localStorage.getItem("userId");
+            let expiredDate = form.elements["expiredDate"].value;
+
+            let newPromotion = {
+                promotionCode: promotionCode,
+                limit: limit,
+                deducted: deducted,
+                createdBy: createdBy,
+                expiredDate: expiredDate,
+            };
+
+            $.ajax({
+                url: `${api}/promotions`,
+                type: "POST",
+                data: JSON.stringify(newPromotion),
+                async: true,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+                    xhr.setRequestHeader("Accept", "application/json");
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                },
+                success: function (result) {
+                    window.location.href =
+                        "http://localhost:8080/promotionManager";
+                },
+                error: function (textStatus, errorThrown) {
+                    console.log("Error: " + textStatus + errorThrown);
+                },
+            });
+        }
     });
 
     $.ajax({
@@ -68,7 +106,7 @@ $(document).ready(function () {
                         </td>
 
                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            ${promotion.expiredDate}
+                            ${promotion.expiredDate.split("T")[0]}
                         </td>
 
                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
@@ -88,5 +126,148 @@ $(document).ready(function () {
             });
         },
         type: "GET",
+    });
+
+    $("#btnViewProfile").click(() => {
+        let modalProfile = $("#myModalProfile");
+        modalProfile.css("display", "block");
+        let userId = localStorage.getItem("userId");
+
+        $.ajax({
+            url: `${api}/users/${userId}`,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error: " + textStatus + " - " + errorThrown);
+            },
+            success: function (data) {
+                let user = data;
+
+                $("#userId").html(() => {
+                    return userId;
+                });
+
+                $("#userName").html(() => {
+                    return user.name;
+                });
+
+                $("#email").html(() => {
+                    return user.email;
+                });
+
+                $("#phoneNumber").html(() => {
+                    return user.phoneNumber;
+                });
+            },
+            type: "GET",
+        });
+    });
+
+    $("#closeModelProfile").click(() => {
+        let myModalProfile = $("#myModalProfile");
+        myModalProfile.hide();
+    });
+
+    let confirmPassword = false;
+    $("#confirmNewPassword").blur(() => {
+        let newPassword = formUpdatePassword.elements["newPassword"].value;
+        let confirmNewPassword =
+            formUpdatePassword.elements["confirmNewPassword"].value;
+
+        if (newPassword != confirmNewPassword) {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "Mật khẩu không khớp";
+            });
+            confirmPassword = false;
+        } else {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "";
+            });
+            confirmPassword = true;
+        }
+    });
+
+    $("#newPassword").blur(() => {
+        let newPassword = formUpdatePassword.elements["newPassword"].value;
+        let confirmNewPassword =
+            formUpdatePassword.elements["confirmNewPassword"].value;
+
+        if (newPassword != confirmNewPassword) {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "Mật khẩu không khớp";
+            });
+            confirmPassword = false;
+        } else {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "";
+            });
+            confirmPassword = true;
+        }
+    });
+
+    let formUpdatePassword = document.getElementById("formUpdatePassword");
+    formUpdatePassword.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!confirmPassword) {
+            alert("Mật khẩu không khớp");
+        } else {
+            let currentPassword =
+                formUpdatePassword.elements["currentPassword"].value;
+            let newPassword = formUpdatePassword.elements["newPassword"].value;
+
+            let userId = localStorage.getItem("userId");
+            let user;
+
+            $.ajax({
+                url: `${api}/users/${userId}`,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Error: " + textStatus + " - " + errorThrown);
+                },
+                success: function (data) {
+                    user = data;
+                    let formUpdatePasswordData = {
+                        email: user.email,
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
+                    };
+                    console.log(formUpdatePasswordData);
+                    $.ajax({
+                        url: `${api}/creds`,
+                        type: "PUT",
+                        data: JSON.stringify(formUpdatePasswordData),
+                        async: true,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(
+                                "Access-Control-Allow-Origin",
+                                "*"
+                            );
+                            xhr.setRequestHeader("Accept", "application/json");
+                            xhr.setRequestHeader(
+                                "Content-Type",
+                                "application/json"
+                            );
+                        },
+                        success: function (result) {
+                            if (result.status == "success") {
+                                $("#notifycationCurentPassword").html(() => {
+                                    return "";
+                                });
+                                alert("Cập nhật mật khẩu thành công");
+
+                                window.location.href =
+                                    "http://localhost:8080/dashboard";
+                            } else {
+                                console.log(result.status);
+                                $("#notifycationCurentPassword").html(() => {
+                                    return "Mật khẩu không đúng";
+                                });
+                            }
+                        },
+                        error: function (textStatus, errorThrown) {
+                            console.log("Error: " + textStatus + errorThrown);
+                        },
+                    });
+                },
+                type: "GET",
+            });
+        }
     });
 });

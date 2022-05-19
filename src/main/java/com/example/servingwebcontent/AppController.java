@@ -54,8 +54,16 @@ public class AppController {
 		return "productManager";
 	}
 	
+	@GetMapping("/login")
+	public String login() {
+		return "login";
+	}
+	
+	
 	@GetMapping("/test")
 	public String test() {
 		return "test";
 	}
+	
+	
 }

@@ -1,6 +1,14 @@
 const api = "http://localhost:8083";
+if (!localStorage.getItem("userId")) {
+    window.location.href = "http://localhost:8080/login";
+}
 
 $(document).ready(function () {
+    $("#btnLoguot").click(() => {
+        localStorage.removeItem("userId");
+        window.location.href = "http://localhost:8080/login";
+    });
+
     $.ajax({
         url: `${api}/products`,
         error: function (jqXHR, textStatus, errorThrown) {
@@ -23,30 +31,46 @@ $(document).ready(function () {
                         let productsHTML = `
                             <tr>
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                    <div class="text-sm leading-5 text-gray-900">${product.id}</div>
+                                    <div class="text-sm leading-5 text-gray-900">${
+                                        product.id
+                                    }</div>
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                    <div class="text-sm leading-5 text-gray-900">${product.name}</div>
+                                    <div class="text-sm leading-5 text-gray-900">${
+                                        product.name
+                                    }</div>
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                    <div class="text-sm leading-5 text-gray-900">${product.cost}</div>
+                                    <div class="text-sm leading-5 text-gray-900">${product.cost.toLocaleString(
+                                        "it-IT",
+                                        {
+                                            style: "currency",
+                                            currency: "VND",
+                                        }
+                                    )}</div>
                                 </td>
                                 
                                 <td
                                     class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
-                                    <div class="text-sm leading-5 text-gray-900">${product.category}</div>
+                                    <div class="text-sm leading-5 text-gray-900">${
+                                        product.category
+                                    }</div>
                                 </td>
                                 
                                 <td
                                     class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
-                                    <div class="text-sm leading-5 text-gray-900">${productInventory.quantity}</div>
+                                    <div class="text-sm leading-5 text-gray-900">${
+                                        productInventory.quantity
+                                    }</div>
                                 </td>
 
                                 <td
                                     class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
-                                    <a class="text-indigo-600 hover:text-indigo-900" onClick='openModelUpdate(${product.id})'>Edit</a>
+                                    <a class="text-indigo-600 hover:text-indigo-900" onClick='openModelUpdate(${
+                                        product.id
+                                    })'>Chỉnh sửa</a>
                                 </td>
                                 
                             </tr>
@@ -196,6 +220,233 @@ $(document).ready(function () {
                 console.log("Error: " + textStatus + errorThrown);
             },
         });
+    });
+
+    $("#btnSearch").click(() => {
+        let value = $("#txtSearch").val();
+
+        $.ajax({
+            url: `${api}/products?name=${value}`,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error: " + textStatus + " - " + errorThrown);
+            },
+            success: function (data) {
+                let products = data;
+
+                $("#product-list-table").html(() => {
+                    return "";
+                });
+
+                products.map((product) => {
+                    $.ajax({
+                        url: `${api}/productInventory/${product.id}`,
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log(
+                                "Error: " + textStatus + " - " + errorThrown
+                            );
+                        },
+                        success: function (data) {
+                            let productInventory = data;
+
+                            let productsHTML = `
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                        <div class="text-sm leading-5 text-gray-900">${
+                                            product.id
+                                        }</div>
+                                    </td>
+    
+                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                        <div class="text-sm leading-5 text-gray-900">${
+                                            product.name
+                                        }</div>
+                                    </td>
+    
+                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                        <div class="text-sm leading-5 text-gray-900">${product.cost.toLocaleString(
+                                            "it-IT",
+                                            {
+                                                style: "currency",
+                                                currency: "VND",
+                                            }
+                                        )}</div>
+                                    </td>
+                                    
+                                    <td
+                                        class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                        <div class="text-sm leading-5 text-gray-900">${
+                                            product.category
+                                        }</div>
+                                    </td>
+                                    
+                                    <td
+                                        class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
+                                        <div class="text-sm leading-5 text-gray-900">${
+                                            productInventory.quantity
+                                        }</div>
+                                    </td>
+    
+                                    <td
+                                        class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
+                                        <a class="text-indigo-600 hover:text-indigo-900" onClick='openModelUpdate(${
+                                            product.id
+                                        })'>Chỉnh Sửa</a>
+                                    </td>
+                                    
+                                </tr>
+                            `;
+
+                            $("#product-list-table").append(productsHTML);
+                        },
+                        type: "GET",
+                    });
+                });
+            },
+            type: "GET",
+        });
+    });
+
+    $("#btnViewProfile").click(() => {
+        let modalProfile = $("#myModalProfile");
+        modalProfile.css("display", "block");
+        let userId = localStorage.getItem("userId");
+
+        $.ajax({
+            url: `${api}/users/${userId}`,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error: " + textStatus + " - " + errorThrown);
+            },
+            success: function (data) {
+                let user = data;
+
+                $("#userId").html(() => {
+                    return userId;
+                });
+
+                $("#userName").html(() => {
+                    return user.name;
+                });
+
+                $("#email").html(() => {
+                    return user.email;
+                });
+
+                $("#phoneNumber").html(() => {
+                    return user.phoneNumber;
+                });
+            },
+            type: "GET",
+        });
+    });
+
+    $("#closeModelProfile").click(() => {
+        let myModalProfile = $("#myModalProfile");
+        myModalProfile.hide();
+    });
+
+    let confirmPassword = false;
+    $("#confirmNewPassword").blur(() => {
+        let newPassword = formUpdatePassword.elements["newPassword"].value;
+        let confirmNewPassword =
+            formUpdatePassword.elements["confirmNewPassword"].value;
+
+        if (newPassword != confirmNewPassword) {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "Mật khẩu không khớp";
+            });
+            confirmPassword = false;
+        } else {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "";
+            });
+            confirmPassword = true;
+        }
+    });
+
+    $("#newPassword").blur(() => {
+        let newPassword = formUpdatePassword.elements["newPassword"].value;
+        let confirmNewPassword =
+            formUpdatePassword.elements["confirmNewPassword"].value;
+
+        if (newPassword != confirmNewPassword) {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "Mật khẩu không khớp";
+            });
+            confirmPassword = false;
+        } else {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "";
+            });
+            confirmPassword = true;
+        }
+    });
+
+    let formUpdatePassword = document.getElementById("formUpdatePassword");
+    formUpdatePassword.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!confirmPassword) {
+            alert("Mật khẩu không khớp");
+        } else {
+            let currentPassword =
+                formUpdatePassword.elements["currentPassword"].value;
+            let newPassword = formUpdatePassword.elements["newPassword"].value;
+
+            let userId = localStorage.getItem("userId");
+            let user;
+
+            $.ajax({
+                url: `${api}/users/${userId}`,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Error: " + textStatus + " - " + errorThrown);
+                },
+                success: function (data) {
+                    user = data;
+                    let formUpdatePasswordData = {
+                        email: user.email,
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
+                    };
+                    console.log(formUpdatePasswordData);
+                    $.ajax({
+                        url: `${api}/creds`,
+                        type: "PUT",
+                        data: JSON.stringify(formUpdatePasswordData),
+                        async: true,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(
+                                "Access-Control-Allow-Origin",
+                                "*"
+                            );
+                            xhr.setRequestHeader("Accept", "application/json");
+                            xhr.setRequestHeader(
+                                "Content-Type",
+                                "application/json"
+                            );
+                        },
+                        success: function (result) {
+                            if (result.status == "success") {
+                                $("#notifycationCurentPassword").html(() => {
+                                    return "";
+                                });
+                                alert("Cập nhật mật khẩu thành công");
+
+                                window.location.href =
+                                    "http://localhost:8080/dashboard";
+                            } else {
+                                console.log(result.status);
+                                $("#notifycationCurentPassword").html(() => {
+                                    return "Mật khẩu không đúng";
+                                });
+                            }
+                        },
+                        error: function (textStatus, errorThrown) {
+                            console.log("Error: " + textStatus + errorThrown);
+                        },
+                    });
+                },
+                type: "GET",
+            });
+        }
     });
 });
 

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/css/normalizeResetCSS.css" />
+        <link rel="stylesheet" href="/css/base.css" />
+        <link rel="stylesheet" href="/css/main.css" />
+        <link rel="stylesheet" href="/css/grid.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap"
+            rel="stylesheet"
+        />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="/js/login.js"></script>
+        <title>Login</title>
+    </head>
+
+    <body>
+        <div class="app">
+            <div class="modal">
+                <div class="modal__overlay"></div>
+                <div class="auth-form" style="z-index: 99; margin: auto">
+                    <div class="auth-form__container" style="height: 330px;">
+                        <form action="" id="form-login">
+                            <div class="auth-form__header">
+                                <h3 class="auth-form__heading">Đăng Nhập</h3>
+                            </div>
+                            <div class="auth-form__form">
+                                <div class="auth-form__group">
+                                    <input
+                                        type="text"
+                                        class="auth-form__input"
+                                        placeholder="Email"
+                                        name="email"
+                                    />
+                                </div>
+                                <div class="auth-form__group">
+                                    <input
+                                        type="password"
+                                        class="auth-form__input"
+                                        placeholder="Mật khẩu"
+                                        name="password"
+                                    />
+                                </div>
+                                <span id="notifycationLogin" style="color: red;"></span>
+                            </div>
+    
+                            <div class="auth-form__controls">
+                                <button type="submit" class="btn btn-primary">ĐĂNG NHẬP</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

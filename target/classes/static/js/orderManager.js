@@ -1,6 +1,14 @@
 const api = "http://localhost:8083";
+if (!localStorage.getItem("userId")) {
+    window.location.href = "http://localhost:8080/login";
+}
 
 $(document).ready(function () {
+    $("#btnLoguot").click(() => {
+        localStorage.removeItem("userId");
+        window.location.href = "http://localhost:8080/login";
+    });
+
     $.ajax({
         url: `${api}/orders`,
         error: function (jqXHR, textStatus, errorThrown) {
@@ -36,7 +44,7 @@ $(document).ready(function () {
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                     <div class="text-sm leading-5 text-gray-900">${
-                                        order.orderDate
+                                        order.orderDate.split(".")[0]
                                     }</div>
                                 </td>
 
@@ -65,6 +73,293 @@ $(document).ready(function () {
             });
         },
         type: "GET",
+    });
+
+    $("#btnSearch").click(() => {
+        let value = $("#txtSearch").val();
+
+        $.ajax({
+            url: `${api}/orders/${value}`,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error: " + textStatus + " - " + errorThrown);
+            },
+            success: function (data) {
+                let order = data;
+                $("#order-list-table").html(() => {
+                    return "";
+                });
+
+                $.ajax({
+                    url: `${api}/customers/${order.customer}`,
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(
+                            "Error: " + textStatus + " - " + errorThrown
+                        );
+                    },
+                    success: function (data) {
+                        let customer = data;
+
+                        let ordersHTML = `
+                            <tr>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900">${
+                                        order.id
+                                    }</div>
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900">${
+                                        customer.name
+                                    }</div>
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900">${
+                                        order.orderDate.split(".")[0]
+                                    }</div>
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <div class="text-sm leading-5 text-gray-900">${order.total.toLocaleString(
+                                        "it-IT",
+                                        {
+                                            style: "currency",
+                                            currency: "VND",
+                                        }
+                                    )}</div>
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
+                                    <a class="text-indigo-600 hover:text-indigo-900" onClick='openModelOrder(${
+                                        order.id
+                                    })'>Chi tiết</a>
+                                </td>
+                            </tr>
+                        `;
+
+                        $("#order-list-table").append(ordersHTML);
+                    },
+                    type: "GET",
+                });
+            },
+            type: "GET",
+        });
+    });
+
+    $("#btnViewProfile").click(() => {
+        let modalProfile = $("#myModalProfile");
+        modalProfile.css("display", "block");
+        let userId = localStorage.getItem("userId");
+
+        $.ajax({
+            url: `${api}/users/${userId}`,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error: " + textStatus + " - " + errorThrown);
+            },
+            success: function (data) {
+                let user = data;
+
+                $("#userId").html(() => {
+                    return userId;
+                });
+
+                $("#userName").html(() => {
+                    return user.name;
+                });
+
+                $("#email").html(() => {
+                    return user.email;
+                });
+
+                $("#phoneNumber").html(() => {
+                    return user.phoneNumber;
+                });
+            },
+            type: "GET",
+        });
+    });
+
+    $("#closeModelProfile").click(() => {
+        let myModalProfile = $("#myModalProfile");
+        myModalProfile.hide();
+    });
+
+    let confirmPassword = false;
+    $("#confirmNewPassword").blur(() => {
+        let newPassword = formUpdatePassword.elements["newPassword"].value;
+        let confirmNewPassword =
+            formUpdatePassword.elements["confirmNewPassword"].value;
+
+        if (newPassword != confirmNewPassword) {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "Mật khẩu không khớp";
+            });
+            confirmPassword = false;
+        } else {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "";
+            });
+            confirmPassword = true;
+        }
+    });
+
+    $("#newPassword").blur(() => {
+        let newPassword = formUpdatePassword.elements["newPassword"].value;
+        let confirmNewPassword =
+            formUpdatePassword.elements["confirmNewPassword"].value;
+
+        if (newPassword != confirmNewPassword) {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "Mật khẩu không khớp";
+            });
+            confirmPassword = false;
+        } else {
+            $("#notifycationConfirmNewPassword").html(() => {
+                return "";
+            });
+            confirmPassword = true;
+        }
+    });
+
+    let formUpdatePassword = document.getElementById("formUpdatePassword");
+    formUpdatePassword.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!confirmPassword) {
+            alert("Mật khẩu không khớp");
+        } else {
+            let currentPassword =
+                formUpdatePassword.elements["currentPassword"].value;
+            let newPassword = formUpdatePassword.elements["newPassword"].value;
+
+            let userId = localStorage.getItem("userId");
+            let user;
+
+            $.ajax({
+                url: `${api}/users/${userId}`,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Error: " + textStatus + " - " + errorThrown);
+                },
+                success: function (data) {
+                    user = data;
+                    let formUpdatePasswordData = {
+                        email: user.email,
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
+                    };
+                    console.log(formUpdatePasswordData);
+                    $.ajax({
+                        url: `${api}/creds`,
+                        type: "PUT",
+                        data: JSON.stringify(formUpdatePasswordData),
+                        async: true,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(
+                                "Access-Control-Allow-Origin",
+                                "*"
+                            );
+                            xhr.setRequestHeader("Accept", "application/json");
+                            xhr.setRequestHeader(
+                                "Content-Type",
+                                "application/json"
+                            );
+                        },
+                        success: function (result) {
+                            if (result.status == "success") {
+                                $("#notifycationCurentPassword").html(() => {
+                                    return "";
+                                });
+                                alert("Cập nhật mật khẩu thành công");
+
+                                window.location.href =
+                                    "http://localhost:8080/dashboard";
+                            } else {
+                                console.log(result.status);
+                                $("#notifycationCurentPassword").html(() => {
+                                    return "Mật khẩu không đúng";
+                                });
+                            }
+                        },
+                        error: function (textStatus, errorThrown) {
+                            console.log("Error: " + textStatus + errorThrown);
+                        },
+                    });
+                },
+                type: "GET",
+            });
+        }
+    });
+
+    $("#filterByDate").blur(() => {
+        let value = $("#filterByDate").val().split("T")[0];
+
+        $.ajax({
+            url: `${api}/orders?date=${value}`,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error: " + textStatus + " - " + errorThrown);
+            },
+            success: function (data) {
+                let orders = data;
+                $("#order-list-table").html(() => {
+                    return "";
+                });
+
+                orders.map((order) => {
+                    $.ajax({
+                        url: `${api}/customers/${order.customer}`,
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log(
+                                "Error: " + textStatus + " - " + errorThrown
+                            );
+                        },
+                        success: function (data) {
+                            let customer = data;
+
+                            let ordersHTML = `
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                        <div class="text-sm leading-5 text-gray-900">${
+                                            order.id
+                                        }</div>
+                                    </td>
+    
+                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                        <div class="text-sm leading-5 text-gray-900">${
+                                            customer.name
+                                        }</div>
+                                    </td>
+    
+                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                        <div class="text-sm leading-5 text-gray-900">${
+                                            order.orderDate.split(".")[0]
+                                        }</div>
+                                    </td>
+    
+                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                        <div class="text-sm leading-5 text-gray-900">${order.total.toLocaleString(
+                                            "it-IT",
+                                            {
+                                                style: "currency",
+                                                currency: "VND",
+                                            }
+                                        )}</div>
+                                    </td>
+                                    <td
+                                        class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
+                                        <a class="text-indigo-600 hover:text-indigo-900" onClick='openModelOrder(${
+                                            order.id
+                                        })'>Chi tiết</a>
+                                    </td>
+                                </tr>
+                            `;
+
+                            $("#order-list-table").append(ordersHTML);
+                        },
+                        type: "GET",
+                    });
+                });
+            },
+            type: "GET",
+        });
     });
 });
 
@@ -96,7 +391,7 @@ function openModelOrder(id) {
                     let customer = data;
 
                     $("#id").html(() => {
-                        return `${customer.id}`;
+                        return `${order.id}`;
                     });
                     $("#customerName").html(() => {
                         return `${customer.name}`;
@@ -107,14 +402,14 @@ function openModelOrder(id) {
                             currency: "VND",
                         })}`;
                     });
-                    $("#phoneNumber").html(() => {
+                    $("#phoneNumberCustomer").html(() => {
                         return `${customer.phoneNumber}`;
                     });
                     $("#shippingAddress").html(() => {
                         return `${order.shippingAddress}`;
                     });
                     $("#orderDate").html(() => {
-                        return `${order.orderDate}`;
+                        return `${order.orderDate.split(".")[0]}`;
                     });
                     $("#discount").html(() => {
                         return `${order.discount}`;

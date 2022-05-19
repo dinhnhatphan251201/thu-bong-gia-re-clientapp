@@ -3,6 +3,8 @@ const api = "http://localhost:8083";
 $(document).ready(function () {
     let token = localStorage.getItem("token");
     let cartDetails;
+    let total = 0;
+    let checkPromotion = true;
 
     $.ajax({
         url: `${api}/carts/${token}`,
@@ -46,11 +48,7 @@ $(document).ready(function () {
                                         "it-IT",
                                         { style: "currency", currency: "VND" }
                                     )} X ${cartDetail.quantity}</span>
-                                    <div class="flex flex-row-reverse">
-                                        <div class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 cursor-pointer text-xl mt-3">
-                                            Xóa
-                                        </div>
-                                    </div>
+                                            
                                 </div>
                             </li>
                             `;
@@ -67,6 +65,8 @@ $(document).ready(function () {
             cart.cartDetails.map((cartDetail) => {
                 subTotal += cartDetail.totalLine;
             });
+
+            total = subTotal + shippingCost;
 
             $("#sub-total").append(
                 `${subTotal.toLocaleString("it-IT", {
@@ -113,111 +113,249 @@ $(document).ready(function () {
     let form = document.getElementById("form-order");
     form.addEventListener("submit", (event) => {
         event.preventDefault();
-        let name = form.elements["name"].value;
-        let email = form.elements["email"].value;
-        let phoneNumber = form.elements["phoneNumber"].value;
+        if (cartDetails.length === 0) {
+            alert("Giỏ hàng đang trống, vui lòng kiểm tra lại");
+        } else if (checkPromotion === false) {
+            alert("Vui lòng kiểm tra lại mã giảm giá");
+        } else {
+            event.preventDefault();
+            let name = form.elements["name"].value;
+            let email = form.elements["email"].value;
+            let phoneNumber = form.elements["phoneNumber"].value;
 
-        let newCustomer = {
-            name,
-            email,
-            phoneNumber,
-        };
+            let newCustomer = {
+                name,
+                email,
+                phoneNumber,
+            };
+
+            $.ajax({
+                url: `${api}/customers`,
+                type: "POST",
+                data: JSON.stringify(newCustomer),
+                async: true,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+                    xhr.setRequestHeader("Accept", "application/json");
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                },
+                success: function (result) {
+                    console.log(result);
+
+                    let shippingCost = 20000;
+                    let shippingNote = form.elements["shippingNote"].value;
+                    let shippingAddress =
+                        form.elements["shippingAddress"].value;
+                    let promotionCode = $("#promotionCode").val();
+                    if (promotionCode === "") {
+                        promotionCode = null;
+                    }
+                    let details = [];
+
+                    cartDetails.map((cartDetail) => {
+                        let temp = {
+                            product: cartDetail.product,
+                            quantity: cartDetail.quantity,
+                        };
+                        details.push(temp);
+                    });
+
+                    let order = {
+                        shippingCost: shippingCost,
+                        shippingAddress: shippingAddress,
+                        customer: result.id,
+                        promotionCode: promotionCode,
+                        shippingNote: shippingNote,
+                        details: [...details],
+                    };
+
+                    console.log(order);
+
+                    $.ajax({
+                        url: `${api}/orders`,
+                        type: "POST",
+                        data: JSON.stringify(order),
+                        async: true,
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader(
+                                "Access-Control-Allow-Origin",
+                                "*"
+                            );
+                            xhr.setRequestHeader("Accept", "application/json");
+                            xhr.setRequestHeader(
+                                "Content-Type",
+                                "application/json"
+                            );
+                        },
+                        success: function (result) {
+                            $.ajax({
+                                url: `${api}/carts/detail/${token}`,
+                                type: "DELETE",
+                                async: true,
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader(
+                                        "Access-Control-Allow-Origin",
+                                        "*"
+                                    );
+                                    xhr.setRequestHeader(
+                                        "Accept",
+                                        "application/json"
+                                    );
+                                    xhr.setRequestHeader(
+                                        "Content-Type",
+                                        "application/json"
+                                    );
+                                },
+                                success: function (result) {
+                                    window.location.href =
+                                        "http://localhost:8080/products";
+                                },
+                                error: function (textStatus, errorThrown) {
+                                    console.log(
+                                        "Error: " + textStatus + errorThrown
+                                    );
+                                },
+                            });
+                        },
+                        error: function (textStatus, errorThrown) {
+                            console.log("Error: " + textStatus + errorThrown);
+                        },
+                    });
+                },
+                error: function (textStatus, errorThrown) {
+                    console.log("Error: " + textStatus + errorThrown);
+                },
+            });
+        }
+    });
+
+    //check promotion
+
+    $("#promotionCode").blur(() => {
+        let promotionCode = $("#promotionCode").val();
 
         $.ajax({
-            url: `${api}/customers`,
-            type: "POST",
-            data: JSON.stringify(newCustomer),
-            async: true,
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-                xhr.setRequestHeader("Accept", "application/json");
-                xhr.setRequestHeader("Content-Type", "application/json");
+            url: `${api}/promotions/promotionCode?promotionCode=${promotionCode}`,
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error: " + textStatus + " - " + errorThrown);
             },
-            success: function (result) {
-                console.log(result);
+            success: function (data) {
+                let today, day, month, year;
+                if (data.id) {
+                    day = data.expiredDate.split("T")[0].split("-")[2];
+                    month = data.expiredDate.split("T")[0].split("-")[1];
+                    year = data.expiredDate.split("T")[0].split("-")[0];
 
-                let shippingCost = 20000;
-                let shippingNote = form.elements["shippingNote"].value;
-                let shippingAddress = form.elements["shippingAddress"].value;
-                let promotionCode = $("#promotionCode").val();
-                if (promotionCode === "") {
-                    promotionCode = null;
+                    today = new Date();
                 }
-                let details = [];
 
-                cartDetails.map((cartDetail) => {
-                    let temp = {
-                        product: cartDetail.product,
-                        quantity: cartDetail.quantity,
-                    };
-                    details.push(temp);
-                });
+                if (promotionCode == "") {
+                    $("#promotionCode").removeClass("text-red-600");
+                    $("#promotionNotifycation").html(function () {
+                        return "";
+                    });
 
-                let order = {
-                    shippingCost: shippingCost,
-                    shippingAddress: shippingAddress,
-                    customer: result.id,
-                    promotionCode: promotionCode,
-                    shippingNote: shippingNote,
-                    details: [...details],
-                };
+                    $("#discount").html(function () {
+                        return `${0 + "%"}`;
+                    });
 
-                console.log(order);
+                    $("#total").html(function () {
+                        return `${total.toLocaleString("it-IT", {
+                            style: "currency",
+                            currency: "VND",
+                        })}`;
+                    });
+                    checkPromotion = true;
+                } else if (!data.id) {
+                    $("#promotionCode").addClass("text-red-600");
+                    $("#promotionNotifycation").html(function () {
+                        return "Mã khuyến mãi không hợp lệ";
+                    });
 
-                $.ajax({
-                    url: `${api}/orders`,
-                    type: "POST",
-                    data: JSON.stringify(order),
-                    async: true,
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader(
-                            "Access-Control-Allow-Origin",
-                            "*"
-                        );
-                        xhr.setRequestHeader("Accept", "application/json");
-                        xhr.setRequestHeader(
-                            "Content-Type",
-                            "application/json"
-                        );
-                    },
-                    success: function (result) {
-                        $.ajax({
-                            url: `${api}/carts/detail/${token}`,
-                            type: "DELETE",
-                            async: true,
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader(
-                                    "Access-Control-Allow-Origin",
-                                    "*"
-                                );
-                                xhr.setRequestHeader(
-                                    "Accept",
-                                    "application/json"
-                                );
-                                xhr.setRequestHeader(
-                                    "Content-Type",
-                                    "application/json"
-                                );
-                            },
-                            success: function (result) {
-                                window.location.href =
-                                    "http://localhost:8080/products";
-                            },
-                            error: function (textStatus, errorThrown) {
-                                console.log(
-                                    "Error: " + textStatus + errorThrown
-                                );
-                            },
-                        });
-                    },
-                    error: function (textStatus, errorThrown) {
-                        console.log("Error: " + textStatus + errorThrown);
-                    },
-                });
+                    $("#discount").html(function () {
+                        return `${0 + "%"}`;
+                    });
+
+                    $("#total").html(function () {
+                        return `${total.toLocaleString("it-IT", {
+                            style: "currency",
+                            currency: "VND",
+                        })}`;
+                    });
+                    checkPromotion = false;
+                } else if (!checkDate(today, day, month, year)) {
+                    $("#promotionCode").addClass("text-red-600");
+                    $("#promotionNotifycation").html(function () {
+                        return "Mã khuyến mãi đã quá hạn sử dụng";
+                    });
+
+                    $("#discount").html(function () {
+                        return `${0 + "%"}`;
+                    });
+
+                    $("#total").html(function () {
+                        return `${total.toLocaleString("it-IT", {
+                            style: "currency",
+                            currency: "VND",
+                        })}`;
+                    });
+                    checkPromotion = false;
+                } else if (data.limit <= 0) {
+                    $("#promotionCode").addClass("text-red-600");
+                    $("#promotionNotifycation").html(function () {
+                        return "Mã khuyến mãi đã quá số lượng dùng";
+                    });
+
+                    $("#discount").html(function () {
+                        return `${0 + "%"}`;
+                    });
+
+                    $("#total").html(function () {
+                        return `${total.toLocaleString("it-IT", {
+                            style: "currency",
+                            currency: "VND",
+                        })}`;
+                    });
+                    checkPromotion = false;
+                } else {
+                    $("#promotionCode").removeClass("text-red-600");
+                    $("#promotionNotifycation").html(function () {
+                        return "";
+                    });
+
+                    $("#discount").html(function () {
+                        return `${data.deducted * 100 + "%"}`;
+                    });
+
+                    $("#total").html(function () {
+                        return `${(total * (1 - data.deducted)).toLocaleString(
+                            "it-IT",
+                            {
+                                style: "currency",
+                                currency: "VND",
+                            }
+                        )}`;
+                    });
+                    checkPromotion = true;
+                }
             },
-            error: function (textStatus, errorThrown) {
-                console.log("Error: " + textStatus + errorThrown);
-            },
+            type: "GET",
         });
     });
 });
+
+function checkDate(today, day, month, year) {
+    if (year >= today.getFullYear()) {
+        if (month >= today.getMonth() + 1) {
+            if (day > today.getDate()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
