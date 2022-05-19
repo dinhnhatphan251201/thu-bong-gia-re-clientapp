@@ -1,12 +1,14 @@
 const api = "http://localhost:8083";
+const client = "http://localhost:8080";
+
 if (!localStorage.getItem("userId")) {
-    window.location.href = "http://localhost:8080/login";
+    window.location.href = `${client}/login`;
 }
 
 $(document).ready(function () {
     $("#btnLoguot").click(() => {
         localStorage.removeItem("userId");
-        window.location.href = "http://localhost:8080/login";
+        window.location.href = `${client}/login`;
     });
 
     $.ajax({
@@ -130,7 +132,7 @@ $(document).ready(function () {
         event.preventDefault();
 
         $.ajax({
-            url: "http://localhost:8083/products",
+            url: `${api}/products`,
             type: "POST",
             data: JSON.stringify(newProduct),
             async: true,
@@ -140,7 +142,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader("Content-Type", "application/json");
             },
             success: function (result) {
-                window.location.href = "http://localhost:8080/productManager";
+                window.location.href = `${client}/productManager`;
             },
             error: function (textStatus, errorThrown) {
                 console.log("Error: " + textStatus + errorThrown);
@@ -183,7 +185,7 @@ $(document).ready(function () {
         event.preventDefault();
 
         $.ajax({
-            url: "http://localhost:8083/products",
+            url: `${api}/products`,
             type: "PUT",
             data: JSON.stringify(newProduct),
             async: true,
@@ -193,7 +195,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader("Content-Type", "application/json");
             },
             success: function (result) {
-                window.location.href = "http://localhost:8080/productManager";
+                window.location.href = `${client}/productManager`;
             },
             error: function (textStatus, errorThrown) {
                 console.log("Error: " + textStatus + errorThrown);
@@ -214,7 +216,7 @@ $(document).ready(function () {
                 xhr.setRequestHeader("Content-Type", "application/json");
             },
             success: function (result) {
-                window.location.href = "http://localhost:8080/productManager";
+                window.location.href = `${client}/productManager`;
             },
             error: function (textStatus, errorThrown) {
                 console.log("Error: " + textStatus + errorThrown);
@@ -430,8 +432,7 @@ $(document).ready(function () {
                                 });
                                 alert("Cập nhật mật khẩu thành công");
 
-                                window.location.href =
-                                    "http://localhost:8080/dashboard";
+                                window.location.href = `${client}/dashboard`;
                             } else {
                                 console.log(result.status);
                                 $("#notifycationCurentPassword").html(() => {

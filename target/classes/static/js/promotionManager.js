@@ -1,12 +1,14 @@
 const api = "http://localhost:8083";
+const client = "http://localhost:8080";
+
 if (!localStorage.getItem("userId")) {
-    window.location.href = "http://localhost:8080/login";
+    window.location.href = `${client}/login`;
 }
 
 $(document).ready(function () {
     $("#btnLoguot").click(() => {
         localStorage.removeItem("userId");
-        window.location.href = "http://localhost:8080/login";
+        window.location.href = `${client}/login`;
     });
 
     let modalAdd = $("#myModalAdd");
@@ -80,8 +82,7 @@ $(document).ready(function () {
                     xhr.setRequestHeader("Content-Type", "application/json");
                 },
                 success: function (result) {
-                    window.location.href =
-                        "http://localhost:8080/promotionManager";
+                    window.location.href = `${client}/promotionManager`;
                 },
                 error: function (textStatus, errorThrown) {
                     console.log("Error: " + textStatus + errorThrown);
@@ -99,30 +100,43 @@ $(document).ready(function () {
             let promotions = data;
 
             promotions.map((promotion) => {
-                let promotionsHTML = `
-                    <tr>
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            ${promotion.promotionCode}
-                        </td>
+                $.ajax({
+                    url: `${api}/users/${promotion.createdBy}`,
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(
+                            "Error: " + textStatus + " - " + errorThrown
+                        );
+                    },
+                    success: function (data) {
+                        let user = data;
 
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            ${promotion.expiredDate.split("T")[0]}
-                        </td>
+                        let promotionsHTML = `
+                            <tr>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    ${promotion.promotionCode}
+                                </td>
 
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            ${promotion.limit}
-                        </td>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    ${promotion.expiredDate.split("T")[0]}
+                                </td>
 
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            ${promotion.deducted}
-                        </td>
-                        <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                            ${promotion.createdBy}
-                        </td>
-                    </tr>
-                `;
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    ${promotion.limit}
+                                </td>
 
-                $("#promotion-list-table").append(promotionsHTML);
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    ${promotion.deducted * 100} %
+                                </td>
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    ${user.name}
+                                </td>
+                            </tr>
+                        `;
+
+                        $("#promotion-list-table").append(promotionsHTML);
+                    },
+                    type: "GET",
+                });
             });
         },
         type: "GET",
@@ -252,8 +266,7 @@ $(document).ready(function () {
                                 });
                                 alert("Cập nhật mật khẩu thành công");
 
-                                window.location.href =
-                                    "http://localhost:8080/dashboard";
+                                window.location.href = `${client}/dashboard`;
                             } else {
                                 console.log(result.status);
                                 $("#notifycationCurentPassword").html(() => {
@@ -269,5 +282,18 @@ $(document).ready(function () {
                 type: "GET",
             });
         }
+    });
+
+    $.ajax({
+        url: `${api}/promotions/stats`,
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("Error: " + textStatus + " - " + errorThrown);
+        },
+        success: function (data) {
+            $("#totalPromotion").html(() => {
+                return data.totalPromotion;
+            });
+        },
+        type: "GET",
     });
 });

@@ -1,4 +1,5 @@
 const api = "http://localhost:8083";
+const client = "http://localhost:8080";
 
 $(document).ready(function () {
     // $("#product-list").html(function () {

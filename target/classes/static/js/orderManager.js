@@ -1,12 +1,14 @@
 const api = "http://localhost:8083";
+const client = "http://localhost:8080";
+
 if (!localStorage.getItem("userId")) {
-    window.location.href = "http://localhost:8080/login";
+    window.location.href = `${client}/login`;
 }
 
 $(document).ready(function () {
     $("#btnLoguot").click(() => {
         localStorage.removeItem("userId");
-        window.location.href = "http://localhost:8080/login";
+        window.location.href = `${client}/login`;
     });
 
     $.ajax({
@@ -270,8 +272,7 @@ $(document).ready(function () {
                                 });
                                 alert("Cập nhật mật khẩu thành công");
 
-                                window.location.href =
-                                    "http://localhost:8080/dashboard";
+                                window.location.href = `${client}/dashboard`;
                             } else {
                                 console.log(result.status);
                                 $("#notifycationCurentPassword").html(() => {
@@ -412,7 +413,7 @@ function openModelOrder(id) {
                         return `${order.orderDate.split(".")[0]}`;
                     });
                     $("#discount").html(() => {
-                        return `${order.discount}`;
+                        return `${order.discount * 100} %`;
                     });
                     $("#total").html(() => {
                         return `${order.total.toLocaleString("it-IT", {

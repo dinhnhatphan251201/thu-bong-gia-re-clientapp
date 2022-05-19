@@ -1,13 +1,14 @@
 const api = "http://localhost:8083";
+const client = "http://localhost:8080";
 
 if (!localStorage.getItem("userId")) {
-    window.location.href = "http://localhost:8080/login";
+    window.location.href = `${client}/login`;
 }
 
 $(document).ready(function () {
     $("#btnLoguot").click(() => {
         localStorage.removeItem("userId");
-        window.location.href = "http://localhost:8080/login";
+        window.location.href = `${client}/login`;
     });
 
     $("#btnViewProfile").click(() => {
@@ -134,8 +135,7 @@ $(document).ready(function () {
                                 });
                                 alert("Cập nhật mật khẩu thành công");
 
-                                window.location.href =
-                                    "http://localhost:8080/dashboard";
+                                window.location.href = `${client}/dashboard`;
                             } else {
                                 console.log(result.status);
                                 $("#notifycationCurentPassword").html(() => {

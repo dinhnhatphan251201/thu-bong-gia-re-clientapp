@@ -1,4 +1,5 @@
 const api = "http://localhost:8083";
+const client = "http://localhost:8080";
 
 $(document).ready(function () {
     let token = localStorage.getItem("token");
@@ -207,8 +208,7 @@ $(document).ready(function () {
                                     );
                                 },
                                 success: function (result) {
-                                    window.location.href =
-                                        "http://localhost:8080/products";
+                                    window.location.href = `${client}/products`;
                                 },
                                 error: function (textStatus, errorThrown) {
                                     console.log(

@@ -1,4 +1,6 @@
 const api = "http://localhost:8083";
+const client = "http://localhost:8080";
+
 let productDetail;
 let quantity_inventory = 0;
 let quantity_cart = 0;
@@ -143,7 +145,7 @@ $(document).ready(function () {
                         );
                     },
                     success: function (result) {
-                        window.location.href = "http://localhost:8080/cart";
+                        window.location.href = `${client}/cart`;
                     },
                     error: function (textStatus, errorThrown) {
                         console.log("Error: " + textStatus + errorThrown);
@@ -177,7 +179,7 @@ $(document).ready(function () {
                 console.log("Error: " + textStatus + " - " + errorThrown);
             },
             success: function (data) {
-                window.location.href = "http://localhost:8080/products";
+                window.location.href = `${client}/products`;
                 let products = data;
 
                 $("#product-list").html(() => {

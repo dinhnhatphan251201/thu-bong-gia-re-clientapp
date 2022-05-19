@@ -1,4 +1,5 @@
 const api = "http://localhost:8083";
+const client = "http://localhost:8080";
 
 $(document).ready(function () {
     let token = localStorage.getItem("token");
@@ -125,7 +126,7 @@ function deleteProductInCart(productId) {
             xhr.setRequestHeader("Content-Type", "application/json");
         },
         success: function (result) {
-            window.location.href = `http://localhost:8080/cart`;
+            window.location.href = `${client}/cart`;
         },
         error: function (textStatus, errorThrown) {
             console.log("Error: " + textStatus + errorThrown);
@@ -134,5 +135,5 @@ function deleteProductInCart(productId) {
 }
 
 function navigateProductDetail(productId) {
-    window.location.href = `http://localhost:8080/products/${productId}`;
+    window.location.href = `${client}/products/${productId}`;
 }
