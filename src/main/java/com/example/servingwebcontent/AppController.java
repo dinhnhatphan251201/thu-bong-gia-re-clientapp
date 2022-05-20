@@ -25,10 +25,10 @@ public class AppController {
 	}
 	
 	
-	@GetMapping("/dashboard")
-	public String showDashboard() {
-		return "dashboard";
-	}
+//	@GetMapping("/dashboard")
+//	public String showDashboard() {
+//		return "dashboard";
+//	}
 	
 	@GetMapping("/orderManager")
 	public String showOrderManager(Model model) {
@@ -64,12 +64,6 @@ public class AppController {
 	public String login(Model model) {
 		model.addAttribute("title", "Đăng nhập");
 		return "login";
-	}
-	
-	
-	@GetMapping("/test")
-	public String test() {
-		return "test";
 	}
 	
 	
