@@ -1,5 +1,6 @@
-const api = "http://localhost:8083";
-const client = "http://localhost:8080";
+const api = "http://localhost:8080";
+const client = "http://localhost:8000";
+
 
 let productDetail;
 let quantity_inventory = 0;

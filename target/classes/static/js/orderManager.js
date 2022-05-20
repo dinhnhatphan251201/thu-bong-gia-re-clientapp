@@ -1,5 +1,5 @@
-const api = "http://localhost:8083";
-const client = "http://localhost:8080";
+const api = "http://localhost:8080";
+const client = "http://localhost:8000";
 
 if (!localStorage.getItem("userId")) {
     window.location.href = `${client}/login`;
@@ -392,12 +392,8 @@ $(document).ready(function () {
                 return `${data.totalOrder} hóa đơn`;
             });
 
-            $("#totalRevenueInADay").html(() => {
-                return `${data.totalRevenueInADay} hóa đơn`;
-            });
-
-            $("#totalRevenueInAMonth").html(() => {
-                return `${data.totalRevenueInAMonth} hóa đơn`;
+            $("#totalProductSoldInAMonth").html(() => {
+                return `${data.totalProductSoldInAMonth} sản phẩm`;
             });
         },
         type: "GET",
