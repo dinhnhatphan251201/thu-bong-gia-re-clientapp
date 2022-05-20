@@ -1,7 +1,6 @@
 const api = "http://localhost:8080";
 const client = "http://localhost:8000";
 
-
 if (!localStorage.getItem("userId")) {
     window.location.href = `${client}/login`;
 }
@@ -275,7 +274,7 @@ $(document).ready(function () {
                                 });
                                 alert("Cập nhật mật khẩu thành công");
 
-                                window.location.href = `${client}/dashboard`;
+                                window.location.href = `${client}/productManager`;
                             } else {
                                 console.log(result.status);
                                 $("#notifycationCurentPassword").html(() => {

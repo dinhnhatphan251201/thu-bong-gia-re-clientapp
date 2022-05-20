@@ -285,7 +285,7 @@ $(document).ready(function () {
                                 });
                                 alert("Cập nhật mật khẩu thành công");
 
-                                window.location.href = `${client}/dashboard`;
+                                window.location.href = `${client}/productManager`;
                             } else {
                                 console.log(result.status);
                                 $("#notifycationCurentPassword").html(() => {
