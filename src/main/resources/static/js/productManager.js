@@ -449,6 +449,23 @@ $(document).ready(function () {
             });
         }
     });
+
+    $.ajax({
+        url: `${api}/products/stats`,
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("Error: " + textStatus + " - " + errorThrown);
+        },
+        success: function (data) {
+            $("#totalProduct").html(() => {
+                return `${data.totalProduct} sản phẩm`;
+            });
+
+            $("#totalCategory").html(() => {
+                return `${data.totalCategory} loại sản phẩm`;
+            });
+        },
+        type: "GET",
+    });
 });
 
 function openModelUpdate(id) {

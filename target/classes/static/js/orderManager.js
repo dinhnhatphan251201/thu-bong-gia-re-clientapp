@@ -381,6 +381,27 @@ $(document).ready(function () {
             type: "GET",
         });
     });
+
+    $.ajax({
+        url: `${api}/orders/stats`,
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("Error: " + textStatus + " - " + errorThrown);
+        },
+        success: function (data) {
+            $("#totalOrder").html(() => {
+                return `${data.totalOrder} hóa đơn`;
+            });
+
+            $("#totalRevenueInADay").html(() => {
+                return `${data.totalRevenueInADay} hóa đơn`;
+            });
+
+            $("#totalRevenueInAMonth").html(() => {
+                return `${data.totalRevenueInAMonth} hóa đơn`;
+            });
+        },
+        type: "GET",
+    });
 });
 
 function openModelOrder(id) {
