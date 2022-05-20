@@ -15,7 +15,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/cart.js"></script>
-    <title>Document</title>
+    <title th:text="${title}" />
     <script>
         tailwind.config = {
           theme: {
@@ -168,9 +168,9 @@
                     </div>
                     <div class='mt-9'>
                         <p class='mb-5 text-2xl' id="total-quantity">Tổng số sản phẩm: </p>
-                        <p class='font-bold mb-10 text-2xl' id="total">Thành tiền: </p>
+                        <p class='font-bold mb-10 text-2xl' id="total">Tạm tính: </p>
                         <a href="./payment">
-                            <button class='btn-primary float-right hover:opacity-80 text-xl'>Thanh toán</button>
+                            <button class='btn-primary float-right hover:opacity-80 text-xl'>Đặt Hàng</button>
                         </a>
                     </div>
                 </div>

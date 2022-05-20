@@ -189,6 +189,13 @@ $(document).ready(function () {
                             );
                         },
                         success: function (result) {
+                            alert(
+                                `   Đặt hàng thành công
+                                    Mã hóa đơn của bạn là: ${result.id}
+                                    Tổng tiền phải thanh toán: ${result.total}
+                                    Địa chỉ: ${result.shippingAddress}
+                                    `
+                            );
                             $.ajax({
                                 url: `${api}/carts/detail/${token}`,
                                 type: "DELETE",

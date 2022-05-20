@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/promotionManager.js"></script>
+    <title th:text="${title}" />
 </head>
 <body class="h-screen overflow-hidden flex items-center justify-center" style="background: #edf2f7;">
     <div>
@@ -210,8 +211,8 @@
                                     </div>
     
                                     <div class="mx-5">
-                                        <h4 class="text-2xl font-semibold text-gray-700">200,521</h4>
-                                        <div class="text-gray-500">Total Orders</div>
+                                        <h4 class="text-2xl font-semibold text-gray-700" id="inDueDatePromotion"></h4>
+                                        <div class="text-gray-500">Số mã giảm giá còn sử dụng được</div>
                                     </div>
                                 </div>
                             </div>
@@ -230,8 +231,8 @@
                                     </div>
     
                                     <div class="mx-5">
-                                        <h4 class="text-2xl font-semibold text-gray-700">215,542</h4>
-                                        <div class="text-gray-500">Available Products</div>
+                                        <h4 class="text-2xl font-semibold text-gray-700" id="expiredPromotion"></h4>
+                                        <div class="text-gray-500">Số mã giảm giá hết sử dụng được</div>
                                     </div>
                                 </div>
                             </div>
@@ -244,7 +245,14 @@
     
                     <div class="flex flex-col mt-8">
                         <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                            <button id="myBtnAdd" class="bg-blue-400 text-white p-2 rounded-md mb-3">Tạo voucher</button>
+                            <div class="flex justify-between">
+                                <button id="myBtnAdd" class="bg-blue-400 text-white p-2 rounded-md mb-3">Tạo voucher</button>
+                                <select name="" id="filterPromotion" class="h-[40px] rounded-lg">
+                                    <option value="all">Tất cả</option>
+                                    <option value="in-due-date">Còn sử dụng được</option>
+                                    <option value="expired">Hết sử dụng được</option>
+                                </select>
+                            </div>
                             <div id="myModalAdd" class="modal">
                                 <form action="" id="form-add-promotion">
                                     <div class="modal-content h-[1000px]">
@@ -259,7 +267,7 @@
                                         </div>
                                         <div class="mb-[10px]">
                                             <span>Số lượng</span>
-                                            <input class="w-[100%] rounded-lg" type="text" name="limit" id="" placeholder="Số lượng" required pattern="[0-9]*" title="Số lượng phải là số nguyên dương">
+                                            <input class="w-[100%] rounded-lg" type="text" name="limit" id="" placeholder="Số lượng" required pattern="^[1-9][0-9]*" title="Số lượng phải là số nguyên dương">
                                         </div>
                                         <div class="mb-[10px]">
                                             <span>Khấu trừ</span>
@@ -267,7 +275,7 @@
                                         </div>
                                         <div class="mb-[10px]">
                                             <span>Ngày hết hạn</span>
-                                            <input class="w-[100%] rounded-lg" type="datetime-local" required name="expiredDate" id="">
+                                            <input class="w-[100%] rounded-lg" type="datetime-local" required name="expiredDate" id="expiredDateInput">
                                         </div>
                                       </div>
                                       <button type="submit" class="bg-blue-300 p-2 rounded-lg mt-3">

@@ -117,7 +117,15 @@ $(document).ready(function () {
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                    ${promotion.expiredDate.split("T")[0]}
+                                    ${
+                                        new Date(
+                                            promotion.expiredDate
+                                        ).toLocaleDateString() +
+                                        " " +
+                                        new Date(
+                                            promotion.expiredDate
+                                        ).toLocaleTimeString()
+                                    }
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
@@ -291,9 +299,266 @@ $(document).ready(function () {
         },
         success: function (data) {
             $("#totalPromotion").html(() => {
-                return data.totalPromotion;
+                return `${data.totalPromotion} mã`;
+            });
+            $("#inDueDatePromotion").html(() => {
+                return `${data.inDueDatePromotion} mã`;
+            });
+            $("#expiredPromotion").html(() => {
+                return `${data.expiredPromotion} mã`;
             });
         },
         type: "GET",
     });
+
+    $("#filterPromotion").on("change", function () {
+        let valueFilter = $("#filterPromotion").val();
+
+        switch (valueFilter) {
+            case "in-due-date":
+                $.ajax({
+                    url: `${api}/promotions/in-due-date`,
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(
+                            "Error: " + textStatus + " - " + errorThrown
+                        );
+                    },
+                    success: function (data) {
+                        let promotions = data;
+
+                        $("#promotion-list-table").html(() => {
+                            return "";
+                        });
+
+                        promotions.map((promotion) => {
+                            $.ajax({
+                                url: `${api}/users/${promotion.createdBy}`,
+                                error: function (
+                                    jqXHR,
+                                    textStatus,
+                                    errorThrown
+                                ) {
+                                    console.log(
+                                        "Error: " +
+                                            textStatus +
+                                            " - " +
+                                            errorThrown
+                                    );
+                                },
+                                success: function (data) {
+                                    let user = data;
+
+                                    let promotionsHTML = `
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${promotion.promotionCode}
+                                            </td>
+            
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${
+                                                    new Date(
+                                                        promotion.expiredDate
+                                                    ).toLocaleDateString() +
+                                                    " " +
+                                                    new Date(
+                                                        promotion.expiredDate
+                                                    ).toLocaleTimeString()
+                                                }
+                                            </td>
+            
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${promotion.limit}
+                                            </td>
+            
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${promotion.deducted * 100} %
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${user.name}
+                                            </td>
+                                        </tr>
+                                    `;
+
+                                    $("#promotion-list-table").append(
+                                        promotionsHTML
+                                    );
+                                },
+                                type: "GET",
+                            });
+                        });
+                    },
+                    type: "GET",
+                });
+
+                break;
+
+            case "expired":
+                $.ajax({
+                    url: `${api}/promotions/expired`,
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(
+                            "Error: " + textStatus + " - " + errorThrown
+                        );
+                    },
+                    success: function (data) {
+                        let promotions = data;
+
+                        $("#promotion-list-table").html(() => {
+                            return "";
+                        });
+
+                        promotions.map((promotion) => {
+                            $.ajax({
+                                url: `${api}/users/${promotion.createdBy}`,
+                                error: function (
+                                    jqXHR,
+                                    textStatus,
+                                    errorThrown
+                                ) {
+                                    console.log(
+                                        "Error: " +
+                                            textStatus +
+                                            " - " +
+                                            errorThrown
+                                    );
+                                },
+                                success: function (data) {
+                                    let user = data;
+
+                                    let promotionsHTML = `
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${promotion.promotionCode}
+                                            </td>
+            
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${
+                                                    new Date(
+                                                        promotion.expiredDate
+                                                    ).toLocaleDateString() +
+                                                    " " +
+                                                    new Date(
+                                                        promotion.expiredDate
+                                                    ).toLocaleTimeString()
+                                                }
+                                            </td>
+            
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${promotion.limit}
+                                            </td>
+            
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${promotion.deducted * 100} %
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${user.name}
+                                            </td>
+                                        </tr>
+                                    `;
+
+                                    $("#promotion-list-table").append(
+                                        promotionsHTML
+                                    );
+                                },
+                                type: "GET",
+                            });
+                        });
+                    },
+                    type: "GET",
+                });
+
+                break;
+
+            default:
+                $.ajax({
+                    url: `${api}/promotions`,
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(
+                            "Error: " + textStatus + " - " + errorThrown
+                        );
+                    },
+                    success: function (data) {
+                        let promotions = data;
+
+                        $("#promotion-list-table").html(() => {
+                            return "";
+                        });
+
+                        promotions.map((promotion) => {
+                            $.ajax({
+                                url: `${api}/users/${promotion.createdBy}`,
+                                error: function (
+                                    jqXHR,
+                                    textStatus,
+                                    errorThrown
+                                ) {
+                                    console.log(
+                                        "Error: " +
+                                            textStatus +
+                                            " - " +
+                                            errorThrown
+                                    );
+                                },
+                                success: function (data) {
+                                    let user = data;
+
+                                    let promotionsHTML = `
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${promotion.promotionCode}
+                                            </td>
+            
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${
+                                                    new Date(
+                                                        promotion.expiredDate
+                                                    ).toLocaleDateString() +
+                                                    " " +
+                                                    new Date(
+                                                        promotion.expiredDate
+                                                    ).toLocaleTimeString()
+                                                }
+                                            </td>
+            
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${promotion.limit}
+                                            </td>
+            
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${promotion.deducted * 100} %
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                                ${user.name}
+                                            </td>
+                                        </tr>
+                                    `;
+
+                                    $("#promotion-list-table").append(
+                                        promotionsHTML
+                                    );
+                                },
+                                type: "GET",
+                            });
+                        });
+                    },
+                    type: "GET",
+                });
+
+                break;
+        }
+    });
+
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth() + 1;
+    let yyyy = today.getFullYear();
+    if (dd < 10) {
+        dd = "0" + dd;
+    }
+    if (mm < 10) {
+        mm = "0" + mm;
+    }
+
+    today = yyyy + "-" + mm + "-" + dd + "T00:00";
+    document.getElementById("expiredDateInput").setAttribute("min", today);
 });

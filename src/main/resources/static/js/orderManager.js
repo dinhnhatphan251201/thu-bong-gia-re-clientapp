@@ -46,7 +46,14 @@ $(document).ready(function () {
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                     <div class="text-sm leading-5 text-gray-900">${
-                                        order.orderDate.split(".")[0]
+                                        // order.orderDate.split(".")[0]
+                                        new Date(
+                                            order.orderDate
+                                        ).toLocaleDateString() +
+                                        " " +
+                                        new Date(
+                                            order.orderDate
+                                        ).toLocaleTimeString()
                                     }</div>
                                 </td>
 
@@ -117,7 +124,13 @@ $(document).ready(function () {
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                     <div class="text-sm leading-5 text-gray-900">${
-                                        order.orderDate.split(".")[0]
+                                        new Date(
+                                            order.orderDate
+                                        ).toLocaleDateString() +
+                                        " " +
+                                        new Date(
+                                            order.orderDate
+                                        ).toLocaleTimeString()
                                     }</div>
                                 </td>
 
@@ -331,7 +344,13 @@ $(document).ready(function () {
     
                                     <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                         <div class="text-sm leading-5 text-gray-900">${
-                                            order.orderDate.split(".")[0]
+                                            new Date(
+                                                order.orderDate
+                                            ).toLocaleDateString() +
+                                            " " +
+                                            new Date(
+                                                order.orderDate
+                                            ).toLocaleTimeString()
                                         }</div>
                                     </td>
     
@@ -410,7 +429,11 @@ function openModelOrder(id) {
                         return `${order.shippingAddress}`;
                     });
                     $("#orderDate").html(() => {
-                        return `${order.orderDate.split(".")[0]}`;
+                        return `${
+                            new Date(order.orderDate).toLocaleDateString() +
+                            " " +
+                            new Date(order.orderDate).toLocaleTimeString()
+                        }`;
                     });
                     $("#discount").html(() => {
                         return `${order.discount * 100} %`;

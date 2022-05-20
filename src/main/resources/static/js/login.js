@@ -1,6 +1,10 @@
 const api = "http://localhost:8083";
 const client = "http://localhost:8080";
 
+if (localStorage.getItem("userId")) {
+    window.location.href = `${client}/productManager`;
+}
+
 $(document).ready(function () {
     let form = document.getElementById("form-login");
     form.addEventListener("submit", (event) => {
