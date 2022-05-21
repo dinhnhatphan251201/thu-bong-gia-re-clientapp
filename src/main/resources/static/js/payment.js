@@ -1,7 +1,6 @@
 const api = "http://localhost:8080";
 const client = "http://localhost:8000";
 
-
 $(document).ready(function () {
     let token = localStorage.getItem("token");
     let cartDetails;
@@ -355,8 +354,8 @@ $(document).ready(function () {
 function checkDate(today, day, month, year) {
     if (year >= today.getFullYear()) {
         if (month >= today.getMonth() + 1) {
-            if (day > today.getDate()) {
-                return true;
+            if (day >= today.getDate()) {
+                return true; 
             } else {
                 return false;
             }
