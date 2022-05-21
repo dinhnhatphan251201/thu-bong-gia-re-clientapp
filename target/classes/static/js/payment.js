@@ -248,10 +248,13 @@ $(document).ready(function () {
             },
             success: function (data) {
                 let today, day, month, year;
+                let expriedDate;
                 if (data.id) {
-                    day = data.expiredDate.split("T")[0].split("-")[2];
-                    month = data.expiredDate.split("T")[0].split("-")[1];
-                    year = data.expiredDate.split("T")[0].split("-")[0];
+                    // day = data.expiredDate.split("T")[0].split("-")[2];
+                    // month = data.expiredDate.split("T")[0].split("-")[1];
+                    // year = data.expiredDate.split("T")[0].split("-")[0];
+
+                    expriedDate = new Date(data.expiredDate);
 
                     today = new Date();
                 }
@@ -290,7 +293,7 @@ $(document).ready(function () {
                         })}`;
                     });
                     checkPromotion = false;
-                } else if (!checkDate(today, day, month, year)) {
+                } else if (!checkDate(today, new Date(data.expiredDate))) {
                     $("#promotionCode").addClass("text-red-600");
                     $("#promotionNotifycation").html(function () {
                         return "Mã khuyến mãi đã quá hạn sử dụng";
@@ -351,18 +354,26 @@ $(document).ready(function () {
     });
 });
 
-function checkDate(today, day, month, year) {
-    if (year >= today.getFullYear()) {
-        if (month >= today.getMonth() + 1) {
-            if (day >= today.getDate()) {
-                return true; 
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    } else {
+// function checkDate(today, day, month, year) {
+//     if (year >= today.getFullYear()) {
+//         if (month >= today.getMonth() + 1) {
+//             if (day >= today.getDate()) {
+//                 return true;
+//             } else {
+//                 return false;
+//             }
+//         } else {
+//             return false;
+//         }
+//     } else {
+//         return false;
+//     }
+// }
+
+function checkDate(today, expriedDate) {
+    if (expriedDate <= today) {
         return false;
+    } else {
+        return true;
     }
 }
